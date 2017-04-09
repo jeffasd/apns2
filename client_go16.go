@@ -5,12 +5,10 @@ package apns2
 import (
 	"net/http"
 
-	"golang.org/x/net/context"
 	"golang.org/x/net/context/ctxhttp"
 )
 
-func (c *Client) requestWithContext(ctx context.Context, req *http.Request) (*http.Response, error) {
-	var httpRes *http.Response
+func (c *Client) requestWithContext(ctx context, req *http.Request) (*http.Response, error) {
 	if ctx != nil {
 		return ctxhttp.Do(ctx, c.HTTPClient, req)
 	}

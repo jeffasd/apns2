@@ -2,12 +2,9 @@
 
 package apns2
 
-import (
-	"context"
-	"net/http"
-)
+import "net/http"
 
-func (c *Client) requestWithContext(ctx context.Context, req *http.Request) (*http.Response, error) {
+func (c *Client) requestWithContext(ctx context, req *http.Request) (*http.Response, error) {
 	if ctx != nil {
 		req = req.WithContext(ctx)
 	}

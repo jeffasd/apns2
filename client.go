@@ -5,7 +5,6 @@ package apns2
 
 import (
 	"bytes"
-	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -95,19 +94,21 @@ func (c *Client) Production() *Client {
 // indicating whether the notification was accepted or rejected by the APNs
 // gateway, or an error if something goes wrong.
 //
-// It wraps PushWithContext for back compatibility.
+// Use PushWithContext if you need better cancelation and timeout control.
 func (c *Client) Push(n *Notification) (*Response, error) {
 	return c.PushWithContext(nil, n)
 }
 
-// PushWithContext sends a Notification to the APNs gateway. If the underlying http.Client
-// is not currently connected, this method will attempt to reconnect
-// transparently before sending the notification. It will return a Response
-// indicating whether the notification was accepted or rejected by the APNs
-// gateway, or an error if something goes wrong.
+// PushWithContext sends a Notification to the APNs gateway. Context carries a
+// deadline and a cancelation signal and allows you to close long running
+// requests when the context timeout is exceeded. Context can be nil, for
+// backwards compatibility.
 //
-// Context with deadline allows to close long request when context timeout exceed. It can be nil, for back compatibility
-func (c *Client) PushWithContext(ctx context.Context, n *Notification) (*Response, error) {
+// If the underlying http.Client is not currently connected, this method will
+// attempt to reconnect transparently before sending the notification. It will
+// return a Response indicating whether the notification was accepted or
+// rejected by the APNs gateway, or an error if something goes wrong.
+func (c *Client) PushWithContext(ctx context, n *Notification) (*Response, error) {
 	payload, err := json.Marshal(n)
 	if err != nil {
 		return nil, err
